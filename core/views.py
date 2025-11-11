@@ -43,7 +43,6 @@ def login_unificado(request):
         username = request.POST.get('username').strip()
         password = request.POST.get('password').strip()
 
-        # Intentar autenticar como cliente
         user = authenticate(request, username=username, password=password)
         if user:
             if user.bloqueado:
@@ -53,7 +52,6 @@ def login_unificado(request):
             request.session['cliente_id'] = user.id
             return redirect('catalogo')
 
-        # Intentar como admin
         admin = AdminUser.objects.filter(username=username, password=password).first()
         if admin:
             request.session['admin_id'] = admin.id
