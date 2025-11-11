@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Panel de Administración</title>
+  <style>
+    .error { color: red; font-weight: bold; }
+    .success { color: green; font-weight: bold; }
+    .success::before { content: "✔ "; }
+  </style>
+</head>
+<body>
+  <h1>Panel de Administración</h1>
+  <p>Bienvenido, administrador.</p>
+
+  {% for message in messages %}
+    <p class="{% if message.tags == 'error' %}error{% else %}success{% endif %}">
+      {{ message }}
+    </p>
+  {% endfor %}
+
+  <a href="{% url 'logout_unificado' %}">Cerrar sesión</a>
+  <hr>
+
+  <h2>Gestión del sistema</h2>
+  <ul>
+    <li><a href="{% url 'categorias_list' %}">Gestionar Categorías</a></li>
+    <br>
+    <li><a href="{% url 'productos_list' %}">Gestionar Productos</a></li>
+    <br>
+    <li><a href="{% url 'pedidos_list' %}">Ver Pedidos</a></li>
+    <br>
+    <li><a href="{% url 'clientes_list' %}">Gestionar Clientes</a></li>
+  </ul>
+
+  <script>
+    setTimeout(() => {
+      document.querySelectorAll('.success, .error').forEach(el => {
+        el.style.transition = 'opacity 0.5s';
+        el.style.opacity = '0';
+        setTimeout(() => el.remove(), 500);
+      });
+    }, 5000);
+  </script>
+
+</body>
+</html>

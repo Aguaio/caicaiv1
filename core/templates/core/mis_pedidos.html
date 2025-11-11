@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Mis Pedidos</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 30px; }
+    table, th, td { border: 1px solid black; border-collapse: collapse; padding: 6px; }
+    th { background-color: #f0f0f0; }
+    .error { color: red; font-weight: bold; }
+    .success { color: green; font-weight: bold; display: flex; align-items: center; }
+    .success::before { content: "✔ "; font-size: 20px; margin-right: 6px; }
+  </style>
+</head>
+<body>
+  <h1>Mis Pedidos</h1>
+
+  {% if messages %}
+    {% for message in messages %}
+      {% if message.tags == 'error' %}
+        <p class="error">{{ message }}</p>
+      {% elif message.tags == 'success' %}
+        <p class="success">{{ message }}</p>
+      {% endif %}
+    {% endfor %}
+  {% endif %}
+
+  {% if pedidos %}
+    <table>
+      <tr>
+        <th>ID</th>
+        <th>Fecha</th>
+        <th>Estado</th>
+        <th>Total</th>
+      </tr>
+      {% for pedido in pedidos %}
+      <tr>
+        <td>{{ pedido.id }}</td>
+        <td>{{ pedido.fecha|date:"d/m/Y H:i" }}</td>
+        <td>{{ pedido.estado }}</td>
+        <td>${{ pedido.total }}</td>
+      </tr>
+      {% endfor %}
+    </table>
+  {% else %}
+    <p>No tienes pedidos registrados.</p>
+  {% endif %}
+
+  <hr>
+  <a href="{% url 'catalogo' %}">Volver al catálogo</a> |
+  <a href="{% url 'logout_unificado' %}">Cerrar sesión</a>
+</body>
+</html>

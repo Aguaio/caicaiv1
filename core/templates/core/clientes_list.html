@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Gestión de Clientes</title>
+  <style>
+    .error { color: red; font-weight: bold; }
+    .success { color: green; font-weight: bold; }
+    .success::before { content: "✔ "; }
+    table { border: 1px solid black; border-collapse: collapse; width: 100%; }
+    th, td { border: 1px solid black; padding: 5px; text-align: left; }
+  </style>
+</head>
+<body>
+  <h1>Clientes Registrados</h1>
+
+  {% for message in messages %}
+    <p class="{% if message.tags == 'error' %}error{% else %}success{% endif %}">
+      {{ message }}
+    </p>
+  {% endfor %}
+
+  <table>
+    <tr>
+      <th>Usuario</th>
+      <th>Correo</th>
+      <th>Dirección</th>
+      <th>Teléfono</th>
+      <th>Estado</th>
+      <th>Acción</th>
+    </tr>
+    {% for c in clientes %}
+    <tr>
+      <td>{{ c.username }}</td>
+      <td>{{ c.email }}</td>
+      <td>{{ c.direccion }}</td>
+      <td>{{ c.telefono }}</td>
+      <td>
+        {% if c.bloqueado %}
+          <span style="color:red;">Bloqueado</span>
+        {% else %}
+          <span style="color:green;">Activo</span>
+        {% endif %}
+      </td>
+      <td>
+        {% if c.bloqueado %}
+          <a href="{% url 'cliente_desbloquear' c.id %}">Desbloquear</a>
+        {% else %}
+          <a href="{% url 'cliente_bloquear' c.id %}">Bloquear</a>
+        {% endif %}
+      </td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="6">No hay clientes registrados.</td></tr>
+    {% endfor %}
+  </table>
+
+  <hr>
+  <h2>Historial reciente</h2>
+  <table>
+    <tr><th>Nombre</th><th>Correo</th><th>Acción</th><th>Fecha</th></tr>
+    {% for h in historial %}
+    <tr>
+      <td>{{ h.nombre }}</td>
+      <td>{{ h.correo }}</td>
+      <td>{{ h.accion }}</td>
+      <td>{{ h.fecha|date:"d/m/Y H:i" }}</td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="4">Sin historial</td></tr>
+    {% endfor %}
+  </table>
+
+  <br>
+  <a href="{% url 'admin_dashboard' %}">Volver al panel</a>
+
+  <script>
+    setTimeout(() => {
+      document.querySelectorAll('.success, .error').forEach(el => {
+        el.style.transition = 'opacity 0.5s';
+        el.style.opacity = '0';
+        setTimeout(() => el.remove(), 500);
+      });
+    }, 5000);
+  </script>
+
+</body>
+</html>

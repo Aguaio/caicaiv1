@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Pedido confirmado</title>
+</head>
+<body>
+  <h1>Pedido Confirmado</h1>
+  <p>Gracias por tu compra, {{ pedido.nombre_cliente }}.</p>
+  <p>ID del pedido: {{ pedido.id }}</p>
+  <a href="{% url 'catalogo' %}">Volver al catálogo</a>
+</body>
+</html>

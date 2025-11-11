@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>{% if producto %}Editar{% else %}Nuevo{% endif %} Producto</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 30px; }
+    .error { color: red; font-weight: bold; }
+    .success { color: green; font-weight: bold; display: flex; align-items: center; }
+    .success::before { content: "✔ "; font-size: 20px; margin-right: 6px; }
+    input, textarea, select { margin: 5px 0; padding: 5px; width: 300px; }
+    button { padding: 6px 12px; cursor: pointer; }
+  </style>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const errores = document.querySelectorAll(".error");
+      if (errores.length > 0) {
+        document.querySelectorAll("input, textarea").forEach(i => i.value = "");
+      }
+    });
+  </script>
+</head>
+<body>
+  <h1>{% if producto %}Editar{% else %}Nuevo{% endif %} Producto</h1>
+
+  {% if messages %}
+    {% for message in messages %}
+      {% if message.tags == 'error' %}
+        <p class="error">{{ message }}</p>
+      {% elif message.tags == 'success' %}
+        <p class="success">{{ message }}</p>
+      {% endif %}
+    {% endfor %}
+  {% endif %}
+
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <label>Nombre:</label><br>
+    <input type="text" name="nombre" value="{{ producto.nombre|default:'' }}" required><br>
+
+    <label>Descripción:</label><br>
+    <textarea name="descripcion">{{ producto.descripcion|default:'' }}</textarea><br>
+
+    <label>Precio:</label><br>
+    <input type="number" step="0.01" name="precio" value="{{ producto.precio|default:'' }}" required><br>
+
+    <label>Stock:</label><br>
+    <input type="number" name="stock" value="{{ producto.stock|default:'0' }}" required><br>
+
+    <label>Categoría:</label><br>
+    <select name="categoria" required>
+      {% for c in categorias %}
+      <option value="{{ c.id }}" {% if producto.categoria.id == c.id %}selected{% endif %}>{{ c.nombre }}</option>
+      {% endfor %}
+    </select><br>
+
+    <label>Imagen:</label><br>
+    <input type="file" name="imagen"><br><br>
+
+    <button type="submit">Guardar</button>
+  </form>
+
+  <br>
+  <a href="{% url 'productos_list' %}">Volver</a>
+
+  <script>
+    setTimeout(() => {
+      document.querySelectorAll('.success, .error').forEach(el => {
+        el.style.transition = 'opacity 0.5s';
+        el.style.opacity = '0';
+        setTimeout(() => el.remove(), 500);
+      });
+    }, 5000);
+  </script>
+
+</body>
+</html>

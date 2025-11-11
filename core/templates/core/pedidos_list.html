@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Pedidos</title>
+  <style>
+    table, th, td { border: 1px solid black; border-collapse: collapse; padding: 5px; }
+  </style>
+</head>
+<body>
+  <h1>Lista de Pedidos</h1>
+  <a href="{% url 'admin_dashboard' %}">Volver al panel</a>
+  <hr>
+
+  <table>
+    <tr>
+      <th>ID</th>
+      <th>Cliente</th>
+      <th>Correo</th>
+      <th>Fecha</th>
+      <th>Estado</th>
+      <th>Total</th>
+      <th>Acciones</th>
+    </tr>
+    {% for p in pedidos %}
+    <tr>
+      <td>{{ p.id }}</td>
+      <td>{{ p.nombre_cliente }}</td>
+      <td>{{ p.correo }}</td>
+      <td>{{ p.fecha }}</td>
+      <td>{{ p.estado }}</td>
+      <td>${{ p.total }}</td>
+      <td><a href="{% url 'pedido_detalle' p.id %}">Ver Detalle</a></td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="7">No hay pedidos registrados.</td></tr>
+    {% endfor %}
+  </table>
+</body>
+</html>

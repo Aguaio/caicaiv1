@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Carrito</title>
+  <style>
+    table, th, td { border: 1px solid black; border-collapse: collapse; padding: 5px; }
+    .nav { margin-bottom: 10px; }
+  </style>
+</head>
+<body>
+  <h1>Carrito</h1>
+
+  <div class="nav">
+    {% if user.is_authenticated %}
+      <p>
+        Sesión iniciada como <strong>{{ user.username }}</strong> |
+        <a href="{% url 'editar_perfil' %}">Mi Perfil</a> |
+        <a href="{% url 'mis_pedidos' %}">Mis Pedidos</a> |
+        <a href="{% url 'logout_unificado' %}">Cerrar sesión</a>
+      </p>
+    {% else %}
+      <p>
+        <a href="{% url 'login_unificado' %}">Iniciar sesión</a> |
+        <a href="{% url 'registro_cliente' %}">Registrarse</a>
+      </p>
+    {% endif %}
+  </div>
+
+  <table>
+    <tr><th>Producto</th><th>Precio</th><th>Cantidad</th><th>Subtotal</th><th></th></tr>
+    {% for p in productos %}
+    <tr>
+      <td>{{ p.nombre }}</td>
+      <td>${{ p.precio }}</td>
+      <td>{{ p.cantidad }}</td>
+      <td>${{ p.subtotal }}</td>
+      <td><a href="{% url 'eliminar_del_carrito' p.id %}">Eliminar</a></td>
+    </tr>
+    {% endfor %}
+    <tr><td colspan="3"><strong>Total</strong></td><td>${{ total }}</td><td></td></tr>
+  </table>
+
+  <br>
+  <a href="{% url 'confirmar_pedido' %}">Confirmar pedido</a> |
+  <a href="{% url 'catalogo' %}">Seguir comprando</a>
+
+  <script>
+    setTimeout(() => {
+      document.querySelectorAll('.success, .error').forEach(el => {
+        el.style.transition = 'opacity 0.5s';
+        el.style.opacity = '0';
+        setTimeout(() => el.remove(), 500);
+      });
+    }, 5000);
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Detalle del Pedido</title>
+  <style>
+    table, th, td { border: 1px solid black; border-collapse: collapse; padding: 5px; }
+  </style>
+</head>
+<body>
+  <h1>Detalle del Pedido #{{ pedido.id }}</h1>
+  <p><strong>Cliente:</strong> {{ pedido.nombre_cliente }}</p>
+  <p><strong>Correo:</strong> {{ pedido.correo }}</p>
+  <p><strong>Dirección:</strong> {{ pedido.direccion }}</p>
+  <p><strong>Fecha:</strong> {{ pedido.fecha }}</p>
+  <p><strong>Estado:</strong> {{ pedido.estado }}</p>
+
+  <hr>
+
+  <table>
+    <tr><th>Producto</th><th>Cantidad</th><th>Subtotal</th></tr>
+    {% for d in detalles %}
+    <tr>
+      <td>{{ d.producto.nombre }}</td>
+      <td>{{ d.cantidad }}</td>
+      <td>${{ d.subtotal }}</td>
+    </tr>
+    {% endfor %}
+  </table>
+
+  <h3>Total: ${{ pedido.total }}</h3>
+
+  <form method="post">
+    {% csrf_token %}
+    <label>Cambiar estado:</label>
+    <select name="estado">
+      <option value="pendiente" {% if pedido.estado == 'pendiente' %}selected{% endif %}>Pendiente</option>
+      <option value="en_proceso" {% if pedido.estado == 'en_proceso' %}selected{% endif %}>En Proceso</option>
+      <option value="finalizado" {% if pedido.estado == 'finalizado' %}selected{% endif %}>Finalizado</option>
+    </select>
+    <button type="submit">Actualizar</button>
+  </form>
+
+  <hr>
+  <a href="{% url 'pedidos_list' %}">Volver a la lista</a>
+</body>
+</html>

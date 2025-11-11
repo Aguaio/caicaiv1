@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Confirmar Pedido</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 30px; }
+    .error { color: red; font-weight: bold; }
+    .success { color: green; font-weight: bold; display: flex; align-items: center; }
+    .success::before { content: "✔ "; font-size: 20px; margin-right: 6px; }
+    form input { margin-bottom: 10px; padding: 5px; width: 250px; }
+    form button { padding: 6px 10px; cursor: pointer; }
+  </style>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const errores = document.querySelectorAll(".error");
+      if (errores.length > 0) {
+        document.querySelectorAll("input").forEach(i => i.value = "");
+      }
+    });
+  </script>
+</head>
+<body>
+  <h1>Confirmar Pedido</h1>
+
+  {% if messages %}
+    {% for message in messages %}
+      {% if message.tags == 'error' %}
+        <p class="error">{{ message }}</p>
+      {% elif message.tags == 'success' %}
+        <p class="success">{{ message }}</p>
+      {% endif %}
+    {% endfor %}
+  {% endif %}
+
+  {% if request.user.is_authenticated %}
+    <p>Cliente: <strong>{{ request.user.username }}</strong></p>
+    <p>Correo: <strong>{{ request.user.email }}</strong></p>
+    <p>Dirección: <strong>{{ request.user.direccion|default:"(no registrada)" }}</strong></p>
+
+    <form method="post">
+      {% csrf_token %}
+      <p>¿Deseas confirmar tu pedido?</p>
+      <button type="submit">Finalizar Pedido</button>
+    </form>
+  {% else %}
+    <p class="error">Debes iniciar sesión para confirmar un pedido.</p>
+    <a href="{% url 'login_unificado' %}">Ir al inicio de sesión</a>
+  {% endif %}
+
+  <br>
+  <a href="{% url 'ver_carrito' %}">Volver al carrito</a>
+
+  <script>
+    setTimeout(() => {
+      document.querySelectorAll('.success, .error').forEach(el => {
+        el.style.transition = 'opacity 0.5s';
+        el.style.opacity = '0';
+        setTimeout(() => el.remove(), 500);
+      });
+    }, 5000);
+  </script>
+
+</body>
+</html>

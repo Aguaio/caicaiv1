@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Productos</title>
+
+  <style>
+    table {
+      border: 1px solid black;
+      border-collapse: collapse;
+    }
+    th, td {
+      border: 1px solid black;
+    }
+  </style>
+
+</head>
+<body>
+  <h1>Gestión de Productos</h1>
+  <a href="{% url 'admin_dashboard' %}">Volver</a> |
+  <a href="{% url 'producto_create' %}">Nuevo Producto</a>
+  <hr>
+
+  <table>
+    <tr>
+      <th>ID</th>
+      <th>Nombre</th>
+      <th>Categoría</th>
+      <th>Precio</th>
+      <th>Stock</th>
+      <th>Imagen</th>
+      <th>Acciones</th>
+    </tr>
+    {% for p in productos %}
+    <tr>
+      <td>{{ p.id }}</td>
+      <td>{{ p.nombre }}</td>
+      <td>{{ p.categoria.nombre }}</td>
+      <td>${{ p.precio }}</td>
+      <td>{{ p.stock }}</td>
+      <td>
+        {% if p.imagen %}
+        <img src="{{ p.imagen.url }}" width="80">
+        {% else %}—{% endif %}
+      </td>
+      <td>
+        <a href="{% url 'producto_edit' p.id %}">Editar</a> |
+        <a href="{% url 'producto_delete' p.id %}">Eliminar</a>
+      </td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="7">Sin productos</td></tr>
+    {% endfor %}
+  </table>
+
+  <script>
+    setTimeout(() => {
+      document.querySelectorAll('.success, .error').forEach(el => {
+        el.style.transition = 'opacity 0.5s';
+        el.style.opacity = '0';
+        setTimeout(() => el.remove(), 500);
+      });
+    }, 5000);
+  </script>
+
+</body>
+</html>

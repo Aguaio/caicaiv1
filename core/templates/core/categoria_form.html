@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>{% if categoria %}Editar{% else %}Nueva{% endif %} Categoría</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 30px; }
+    .error { color: red; font-weight: bold; }
+    .success { color: green; font-weight: bold; display: flex; align-items: center; }
+    .success::before { content: "✔ "; font-size: 20px; margin-right: 6px; }
+    input { margin: 5px 0; padding: 5px; width: 250px; }
+    button { padding: 6px 12px; cursor: pointer; }
+  </style>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const errores = document.querySelectorAll(".error");
+      if (errores.length > 0) {
+        document.querySelectorAll("input").forEach(i => i.value = "");
+      }
+    });
+  </script>
+</head>
+<body>
+  <h1>{% if categoria %}Editar{% else %}Nueva{% endif %} Categoría</h1>
+
+  {% if messages %}
+    {% for message in messages %}
+      {% if message.tags == 'error' %}
+        <p class="error">{{ message }}</p>
+      {% elif message.tags == 'success' %}
+        <p class="success">{{ message }}</p>
+      {% endif %}
+    {% endfor %}
+  {% endif %}
+
+  <form method="post">
+    {% csrf_token %}
+    <label>Nombre:</label><br>
+    <input type="text" name="nombre" value="{{ categoria.nombre|default:'' }}" required><br>
+    <button type="submit">Guardar</button>
+  </form>
+
+  <br>
+  <a href="{% url 'categorias_list' %}">Volver</a>
+
+  <script>
+    setTimeout(() => {
+      document.querySelectorAll('.success, .error').forEach(el => {
+        el.style.transition = 'opacity 0.5s';
+        el.style.opacity = '0';
+        setTimeout(() => el.remove(), 500);
+      });
+    }, 5000);
+  </script>
+
+</body>
+</html>

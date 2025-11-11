@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Editar Perfil</title>
+  <style>
+    .error { color: red; font-weight: bold; }
+    .success { color: green; font-weight: bold; }
+    .success::before { content: "✔ "; }
+  </style>
+</head>
+<body>
+  <h1>Editar Perfil</h1>
+
+  {% for message in messages %}
+    <p class="{% if message.tags == 'error' %}error{% else %}success{% endif %}">
+      {{ message }}
+    </p>
+  {% endfor %}
+
+  <form method="post">
+    {% csrf_token %}
+    <label>Usuario:</label><br>
+    <input type="text" value="{{ user.username }}" readonly><br><br>
+
+    <label>Correo:</label><br>
+    <input type="email" name="correo" value="{{ user.email|default:'' }}" required><br><br>
+
+    <label>Dirección:</label><br>
+    <input type="text" name="direccion" value="{{ user.direccion|default:'' }}"><br><br>
+
+    <label>Teléfono:</label><br>
+    <input type="text" name="telefono" value="{{ user.telefono|default:'' }}"><br><br>
+
+    <button type="submit">Guardar cambios</button>
+  </form>
+
+  <br>
+  <a href="{% url 'catalogo' %}">Volver al catálogo</a>
+
+  <script>
+    setTimeout(() => {
+      document.querySelectorAll('.success, .error').forEach(el => {
+        el.style.transition = 'opacity 0.5s';
+        el.style.opacity = '0';
+        setTimeout(() => el.remove(), 500);
+      });
+    }, 5000);
+  </script>
+
+</body>
+</html>

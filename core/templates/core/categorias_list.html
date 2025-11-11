@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Categorías</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 30px; }
+    table { border: 1px solid black; border-collapse: collapse; width: 100%; }
+    th, td { border: 1px solid black; padding: 5px; text-align: left; }
+    .error { color: red; font-weight: bold; }
+    .success { color: green; font-weight: bold; display: flex; align-items: center; }
+    .success::before { content: "✔ "; font-size: 20px; margin-right: 6px; }
+    a, button { margin-right: 10px; text-decoration: none; }
+  </style>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const errores = document.querySelectorAll(".error");
+      if (errores.length > 0) {
+        document.querySelectorAll("input").forEach(i => i.value = "");
+      }
+    });
+  </script>
+</head>
+<body>
+  <h1>Gestión de Categorías</h1>
+
+  {% if messages %}
+    {% for message in messages %}
+      {% if message.tags == 'error' %}
+        <p class="error">{{ message }}</p>
+      {% elif message.tags == 'success' %}
+        <p class="success">{{ message }}</p>
+      {% endif %}
+    {% endfor %}
+  {% endif %}
+
+  <a href="{% url 'admin_dashboard' %}">Volver al Panel</a> |
+  <a href="{% url 'categoria_create' %}">Nueva Categoría</a>
+  <hr>
+
+  <table>
+    <tr><th>ID</th><th>Nombre</th><th>Acciones</th></tr>
+    {% for c in categorias %}
+    <tr>
+      <td>{{ c.id }}</td>
+      <td>{{ c.nombre }}</td>
+      <td>
+        <a href="{% url 'categoria_edit' c.id %}">Editar</a> |
+        <a href="{% url 'categoria_delete' c.id %}" onclick="return confirm('¿Seguro que deseas eliminar esta categoría?');">Eliminar</a>
+      </td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="3">No hay categorías registradas.</td></tr>
+    {% endfor %}
+  </table>
+</body>
+</html>
