@@ -1,3 +1,5 @@
+{% load dict_extras %}
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -44,9 +46,15 @@
       </td>
       <td>
         {% if c.bloqueado %}
-          <a href="{% url 'cliente_desbloquear' c.id %}">Desbloquear</a>
+          <form action="{% url 'cliente_desbloquear' c.id %}" method="post" style="display:inline">
+            {% csrf_token %}
+            <button type="submit">Desbloquear</button>
+          </form>
         {% else %}
-          <a href="{% url 'cliente_bloquear' c.id %}">Bloquear</a>
+          <form action="{% url 'cliente_bloquear' c.id %}" method="post" style="display:inline">
+            {% csrf_token %}
+            <button type="submit">Bloquear</button>
+          </form>
         {% endif %}
       </td>
     </tr>
@@ -57,18 +65,61 @@
 
   <hr>
   <h2>Historial reciente</h2>
-  <table>
-    <tr><th>Nombre</th><th>Correo</th><th>Acción</th><th>Fecha</th></tr>
-    {% for h in historial %}
-    <tr>
-      <td>{{ h.nombre }}</td>
-      <td>{{ h.correo }}</td>
-      <td>{{ h.accion }}</td>
-      <td>{{ h.fecha|date:"d/m/Y H:i" }}</td>
-    </tr>
-    {% empty %}
-    <tr><td colspan="4">Sin historial</td></tr>
-    {% endfor %}
+  <table style="border-collapse:collapse; width:100%;" border="1" cellpadding="6">
+    <thead>
+      <tr>
+        <th>Nombre</th>
+        <th>Correo</th>
+        <th>Última acción</th>
+        <th>Última fecha</th>
+        <th>Historial</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for r in resumen %}
+      <tr>
+        <td>{{ r.username }}</td>
+        <td>{{ r.correo }}</td>
+        <td>{{ r.accion }}</td>
+        <td>{% if r.fecha %}{{ r.fecha|date:"d/m/Y H:i" }}{% else %}—{% endif %}</td>
+        <td>
+          {% if r.tiene_historial %}
+            <button class="toggle-h"
+                    data-target="hist-{{ r.username|slugify }}"
+                    aria-expanded="false"
+                    title="Ver historial completo">▶</button>
+          {% else %}
+            —
+          {% endif %}
+        </td>
+      </tr>
+      <tr id="hist-{{ r.username|slugify }}" class="hist-row" style="display:none;">
+        <td colspan="5">
+          <table style="border-collapse:collapse; width:100%;" border="1" cellpadding="6">
+            <thead>
+              <tr>
+                <th>Nombre</th>
+                <th>Correo</th>
+                <th>Acción</th>
+                <th>Fecha</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for h in historial_por_cliente.r.username %}{% endfor %}
+              {% for h in historial_por_cliente|get_item:r.username %}
+              <tr>
+                <td>{{ h.nombre }}</td>
+                <td>{{ h.correo }}</td>
+                <td>{{ h.accion }}</td>
+                <td>{{ h.fecha|date:"d/m/Y H:i" }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
   </table>
 
   <br>
@@ -82,6 +133,19 @@
         setTimeout(() => el.remove(), 500);
       });
     }, 5000);
+  </script>
+
+  <script>
+    document.querySelectorAll('.toggle-h').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = btn.getAttribute('data-target');
+        const row = document.getElementById(id);
+        const open = row.style.display !== 'none';
+        row.style.display = open ? 'none' : '';
+        btn.textContent = open ? '▶' : '▼';
+        btn.setAttribute('aria-expanded', String(!open));
+      });
+    });
   </script>
 
 </body>

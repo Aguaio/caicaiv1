@@ -24,7 +24,10 @@
             {% endif %}
           {% endfor %}
         </td>
-        <td><a href="{% url 'cliente_desbloquear' c.id %}">Desbloquear</a></td>
+        <form action="{% url 'cliente_desbloquear' c.id %}" method="post" style="display:inline">
+          {% csrf_token %}
+          <button type="submit">Desbloquear</button>
+        </form>
       </tr>
       {% endif %}
     {% empty %}

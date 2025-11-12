@@ -5,6 +5,7 @@
   <title>Pedidos</title>
   <style>
     table, th, td { border: 1px solid black; border-collapse: collapse; padding: 5px; }
+    tr.bloqueado { color: #b30000; background-color: #ffe5e5; font-weight: bold; }
   </style>
 </head>
 <body>
@@ -23,11 +24,11 @@
       <th>Acciones</th>
     </tr>
     {% for p in pedidos %}
-    <tr>
+    <tr class="{% if p.bloqueado %}bloqueado{% endif %}">
       <td>{{ p.id }}</td>
       <td>{{ p.nombre_cliente }}</td>
       <td>{{ p.correo }}</td>
-      <td>{{ p.fecha }}</td>
+      <td>{{ p.fecha|date:"d/m/Y H:i" }}</td>
       <td>{{ p.estado }}</td>
       <td>${{ p.total }}</td>
       <td><a href="{% url 'pedido_detalle' p.id %}">Ver Detalle</a></td>
@@ -37,4 +38,5 @@
     {% endfor %}
   </table>
 </body>
+
 </html>

@@ -46,7 +46,10 @@
       <td>{{ c.nombre }}</td>
       <td>
         <a href="{% url 'categoria_edit' c.id %}">Editar</a> |
-        <a href="{% url 'categoria_delete' c.id %}" onclick="return confirm('¿Seguro que deseas eliminar esta categoría?');">Eliminar</a>
+        <form action="{% url 'categoria_delete' c.id %}" method="post" style="display:inline" onsubmit="return confirm('¿Seguro que deseas eliminar esta categoría?');">
+          {% csrf_token %}
+          <button type="submit">Eliminar</button>
+        </form>
       </td>
     </tr>
     {% empty %}

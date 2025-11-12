@@ -11,12 +11,20 @@
 <body>
   <h1>Carrito</h1>
 
+  {% if user.is_authenticated and user.bloqueado %}
+    <p style="color:red; font-weight:bold">Tu cuenta está bloqueada. Solo puedes ver el catálogo.</p>
+  {% endif %}
+
   <div class="nav">
     {% if user.is_authenticated %}
       <p>
         Sesión iniciada como <strong>{{ user.username }}</strong> |
         <a href="{% url 'editar_perfil' %}">Mi Perfil</a> |
         <a href="{% url 'mis_pedidos' %}">Mis Pedidos</a> |
+        <span style="float:right">
+          <a href="{% url 'ver_carrito' %}">Carrito</a>
+          (<span id="carrito-count">{{ cart_count|default:0 }}</span>)
+        </span>
         <a href="{% url 'logout_unificado' %}">Cerrar sesión</a>
       </p>
     {% else %}
@@ -35,7 +43,12 @@
       <td>${{ p.precio }}</td>
       <td>{{ p.cantidad }}</td>
       <td>${{ p.subtotal }}</td>
-      <td><a href="{% url 'eliminar_del_carrito' p.id %}">Eliminar</a></td>
+      <td>
+        <form action="{% url 'eliminar_del_carrito' p.id %}" method="post" style="display:inline">
+          {% csrf_token %}
+          <button type="submit">Eliminar</button>
+        </form>
+      </td>
     </tr>
     {% endfor %}
     <tr><td colspan="3"><strong>Total</strong></td><td>${{ total }}</td><td></td></tr>

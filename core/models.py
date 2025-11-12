@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.hashers import make_password, check_password
 
 class AdminUser(models.Model):
     username = models.CharField(max_length=100, unique=True)
@@ -7,6 +8,13 @@ class AdminUser(models.Model):
 
     def __str__(self):
         return self.username
+
+    # ↓ nuevos métodos seguros
+    def set_password(self, raw_password: str) -> None:
+        self.password = make_password(raw_password)
+
+    def check_password(self, raw_password: str) -> bool:
+        return check_password(raw_password, self.password)
 
 class Categoria(models.Model):
     nombre = models.CharField(max_length=100, unique=True)

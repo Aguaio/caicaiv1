@@ -13,6 +13,18 @@
   </style>
 </head>
 <body>
+  
+  {% if user.is_authenticated and user.bloqueado %}
+    <p style="color:red; font-weight:bold">Tu cuenta está bloqueada. Solo puedes ver el catálogo.</p>
+  {% endif %}
+
+  <div class="nav" style="margin-bottom:10px">
+    <span style="float:right">
+      <a href="{% url 'ver_carrito' %}">Carrito</a>
+      (<span id="carrito-count">{{ cart_count|default:0 }}</span>)
+    </span>
+  </div>
+
   <h1>Mis Pedidos</h1>
 
   {% if messages %}

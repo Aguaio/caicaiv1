@@ -23,6 +23,10 @@
 <body>
   <h1>Confirmar Pedido</h1>
 
+  {% if user.is_authenticated and user.bloqueado %}
+    <p style="color:red; font-weight:bold">Tu cuenta está bloqueada. Solo puedes ver el catálogo.</p>
+  {% endif %}
+
   {% if messages %}
     {% for message in messages %}
       {% if message.tags == 'error' %}

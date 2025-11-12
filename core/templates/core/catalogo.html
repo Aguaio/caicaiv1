@@ -16,15 +16,26 @@
   <div class="nav">
     {% if user.is_authenticated %}
       <p>
-        Sesión iniciada como <strong>{{ user.username }}</strong> |
-        <a href="{% url 'editar_perfil' %}">Mi Perfil</a> |
-        <a href="{% url 'mis_pedidos' %}">Mis Pedidos</a> |
+        Sesión: <strong>{{ user.username }}</strong> |
+        {% if user.bloqueado %}<em>(bloqueado)</em> |{% endif %}
+        <a href="{% url 'catalogo' %}">Catálogo</a> |
+        {% if not user.bloqueado %}
+          <a href="{% url 'editar_perfil' %}">Mi Perfil</a> |
+          <a href="{% url 'mis_pedidos' %}">Mis Pedidos</a> |
+          <span style="float:right">
+            <a href="{% url 'ver_carrito' %}">Carrito</a>
+            (<span id="carrito-count">{{ cart_count|default:0 }}</span>)
+          </span>
+        {% else %}
+          <span style="opacity:.5">Mi Perfil</span> |
+          <span style="opacity:.5">Mis Pedidos</span> |
+          <span style="opacity:.5">Carrito</span>
+        {% endif %}
         <a href="{% url 'logout_unificado' %}">Cerrar sesión</a>
       </p>
     {% else %}
       <p>
         <a href="{% url 'login_unificado' %}">Iniciar sesión</a> |
-        <a href="{% url 'registro_cliente' %}">Registrarse</a>
       </p>
     {% endif %}
   </div>
@@ -67,15 +78,23 @@
       <td>{{ p.descripcion }}</td>
       <td>${{ p.precio }}</td>
       <td>{{ p.categoria.nombre }}</td>
-      <td><a href="{% url 'agregar_al_carrito' p.id %}">Agregar al carrito</a></td>
+      <td>
+        {% if user.is_authenticated and user.bloqueado %}
+          <button type="button" disabled title="Cuenta bloqueada">Agregar</button>
+        {% else %}
+          <form class="add-to-cart" action="{% url 'agregar_al_carrito' p.id %}" method="post" style="display:inline">
+            {% csrf_token %}
+            <input type="number" name="cantidad" value="1" min="1" style="width:60px">
+            <button type="submit">Agregar</button>
+          </form>
+        {% endif %}
+      </td>
     </tr>
     {% empty %}
     <tr><td colspan="6">No hay productos disponibles.</td></tr>
     {% endfor %}
   </table>
 
-  <hr>
-  <a href="{% url 'ver_carrito' %}">Ver carrito</a>
 
   <script>
     setTimeout(() => {
@@ -86,6 +105,33 @@
       });
     }, 5000);
   </script>
+  <script>
+  function getCookie(name) {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(';').shift();
+  }
+  const csrftoken = getCookie('csrftoken');
+
+  document.querySelectorAll('form.add-to-cart').forEach(form => {
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const fd = new FormData(form);
+      const res = await fetch(form.action, {
+        method: 'POST',
+        headers: {'X-CSRFToken': csrftoken, 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json'},
+        body: fd
+      });
+      if (!res.ok) return;
+      const data = await res.json();
+      if (data && data.ok) {
+        const badge = document.getElementById('carrito-count');
+        if (badge) badge.textContent = data.count;
+      }
+    });
+  });
+</script>
+
 
 </body>
 </html>

@@ -12,9 +12,14 @@
   <p><strong>Cliente:</strong> {{ pedido.nombre_cliente }}</p>
   <p><strong>Correo:</strong> {{ pedido.correo }}</p>
   <p><strong>Dirección:</strong> {{ pedido.direccion }}</p>
-  <p><strong>Fecha:</strong> {{ pedido.fecha }}</p>
+  <p><strong>Fecha:</strong> {{ pedido.fecha|date:"d/m/Y H:i" }}</p>
   <p><strong>Estado:</strong> {{ pedido.estado }}</p>
 
+  {% if bloqueado %}
+    <p style="color:red; font-weight:bold;">
+      ⚠ Este cliente está <u>bloqueado</u>. No puede realizar nuevas compras.
+    </p>
+  {% endif %}
   <hr>
 
   <table>
